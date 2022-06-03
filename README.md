@@ -1,2 +1,3 @@
-# AML-Bot-Sync-MariaDB
-My AML Bot on Python-Telegram-Bot for work
+# AML-Bot
+
+Бот для загрузки отчетов по работе "Предотвращение нелегальной деятельности в сфере криптовалют".
