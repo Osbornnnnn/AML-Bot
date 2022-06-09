@@ -1,6 +1,6 @@
 from telegram.ext import UpdateFilter
 from datetime import datetime, timedelta
-from app.keyboards.user_keybd import UserKeyboard
+from ..keyboards.user_keybd import UserKeyboard
 from telegram import ReplyKeyboardRemove, Message
 
 

@@ -6,9 +6,9 @@ import requests
 import datetime
 from pathlib import Path
 from zipfile import ZipFile
-from app.models.user import User
-from app.config import TELEGRAM_TOKEN
-from app.models.report import Report
+from ..models.user import User
+from ..config import TELEGRAM_TOKEN
+from ..models.report import Report
 from telegram.ext import CallbackContext
 
 
@@ -75,7 +75,7 @@ class SendReports:
                 for file in files:
                     zipObj.write(os.path.join(root, file),
                                  os.path.relpath(os.path.join(root, file),
-                                                 os.path.join(path_to_reports, '..')))
+                                                 os.path.join(path_to_reports, '../..')))
 
         [context.bot.send_document(admin.user_id, open(Path(path_to_zip, SendReports.date.strftime("%d.%m.%Y.zip")), "rb"),
                                    caption="<b>На проверку</b>") for admin in admins]

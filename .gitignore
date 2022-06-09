@@ -4,6 +4,7 @@ __pycache__/
 tmp/
 logs/
 reports/
+.env
 *.zip
 *.pyc
 *.log

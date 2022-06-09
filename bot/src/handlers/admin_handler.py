@@ -1,7 +1,5 @@
-from telegram import Update, ParseMode
-from app.filters.is_user import IsUser
-from app.filters.is_access import IsAccess
-from app.keyboards.admin_keybd import AdminKeyboard
+from telegram import Update
+from ..keyboards.admin_keybd import AdminKeyboard
 
 
 class AdminHandler:

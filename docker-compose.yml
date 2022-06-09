@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+    aml-bot:
+        build:
+            context: bot
+            dockerfile: Dockerfile
+        container_name: AML-Bot
+        environment:
+            TELEGRAM_TOKEN: ${TELEGRAM_TOKEN}
+            MARIADB_URI: ${MARIADB_URI}
+        volumes:
+            - ./bot/tmp:/opt/AML-Bot/bot/tmp
+            - ./bot/reports:/opt/AML-Bot/bot/reports
+            - ./bot/logs:/opt/AML-Bot/bot/logs
+        networks:
+            - default
+
+networks:
+  default:
+    external: true
+    name: backend-network

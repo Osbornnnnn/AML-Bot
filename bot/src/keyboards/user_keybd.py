@@ -1,4 +1,4 @@
-from app.keyboards import KeyboardMarkup
+from . import KeyboardMarkup
 
 
 class UserKeyboard:

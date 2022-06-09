@@ -1,9 +1,9 @@
 from telegram import Update
-from app.models.user import User
-from app.filters.is_user import IsUser
-from app.keyboards import KeyboardMarkup
-from app.filters.is_access import IsAccess
-from app.keyboards.user_keybd import UserKeyboard
+from ..models.user import User
+from ..filters.is_user import IsUser
+from ..keyboards import KeyboardMarkup
+from ..filters.is_access import IsAccess
+from ..keyboards.user_keybd import UserKeyboard
 from telegram.ext import ConversationHandler, MessageHandler, Filters, CallbackQueryHandler
 
 

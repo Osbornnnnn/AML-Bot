@@ -1,19 +1,13 @@
 import os
-import re
-import uuid
 import ujson
-import base64
 import requests
 import datetime
 from pathlib import Path
 from telegram import Update
-from app.models.user import User
-from app.models.report import Report
-from app.config import TELEGRAM_TOKEN
-from app.filters.is_admin import IsAdmin
-from app.keyboards import KeyboardMarkup
-from app.keyboards.admin_keybd import AdminKeyboard
-from telegram.ext import ConversationHandler, CallbackContext, MessageHandler, Filters, CallbackQueryHandler
+from ..filters.is_admin import IsAdmin
+from ..keyboards import KeyboardMarkup
+from ..keyboards.admin_keybd import AdminKeyboard
+from telegram.ext import ConversationHandler, CallbackContext, MessageHandler, Filters
 
 
 class AdminUploadConversation:

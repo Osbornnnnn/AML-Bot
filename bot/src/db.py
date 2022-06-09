@@ -2,8 +2,7 @@ from contextlib import contextmanager
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
-from app import config
-
+from . import config
 
 engine = create_engine(config.DATABASE_URI)
 base = declarative_base()

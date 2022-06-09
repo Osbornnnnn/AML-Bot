@@ -1,8 +1,8 @@
 from telegram import Update
-from app.models.user import User
-from app.filters.is_user import IsUser
-from app.filters.is_access import IsAccess
-from app.keyboards.user_keybd import UserKeyboard
+from ..models.user import User
+from ..filters.is_user import IsUser
+from ..filters.is_access import IsAccess
+from ..keyboards.user_keybd import UserKeyboard
 
 
 class UserHandler:

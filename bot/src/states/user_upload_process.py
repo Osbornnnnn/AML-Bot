@@ -2,12 +2,12 @@ import re
 import uuid
 import base64
 from telegram import Update
-from app.models.user import User
-from app.models.report import Report
-from app.filters.is_user import IsUser
-from app.keyboards import KeyboardMarkup
-from app.filters.is_access import IsAccess
-from app.keyboards.user_keybd import UserKeyboard
+from ..models.user import User
+from ..models.report import Report
+from ..filters.is_user import IsUser
+from ..keyboards import KeyboardMarkup
+from ..filters.is_access import IsAccess
+from ..keyboards.user_keybd import UserKeyboard
 from telegram.ext import ConversationHandler, CallbackContext, MessageHandler, Filters, CallbackQueryHandler
 
 

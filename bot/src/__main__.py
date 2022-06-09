@@ -1,7 +1,10 @@
 from telegram import ParseMode
-from app import handlers, queues, config
 from telegram.ext import Updater, Defaults
 
+try:
+    from bot.src import handlers, queues, config
+except:
+    from . import handlers, queues, config
 
 def main() -> None:
     defaults = Defaults(parse_mode=ParseMode.HTML, run_async=True, disable_web_page_preview=True, tzinfo=config.TIMEZONE)

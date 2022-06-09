@@ -1,11 +1,11 @@
-from app.filters.is_user import IsUser
-from app.filters.is_admin import IsAdmin
-from app.filters.is_access import IsAccess
-from app.handlers.user_handler import UserHandler
-from app.handlers.admin_handler import AdminHandler
-from app.states.user_upload_process import UserUploadConversation
-from app.states.admin_upload_process import AdminUploadConversation
-from app.states.profile_change_wallet_process import ProfileConversation
+from ..filters.is_user import IsUser
+from ..filters.is_admin import IsAdmin
+from ..filters.is_access import IsAccess
+from .user_handler import UserHandler
+from .admin_handler import AdminHandler
+from ..states.user_upload_process import UserUploadConversation
+from ..states.admin_upload_process import AdminUploadConversation
+from ..states.profile_change_wallet_process import ProfileConversation
 from telegram.ext import Dispatcher, Filters, CommandHandler, CallbackQueryHandler, MessageHandler
 
 

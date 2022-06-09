@@ -1,7 +1,7 @@
 from __future__ import annotations
 import datetime
-from app.db import db_session
-from app.models.base import BaseModel
+from ..db import db_session
+from .base import BaseModel
 from datetime import datetime, timedelta
 from sqlalchemy import Column, Integer, BigInteger, String, DATETIME, JSON, TEXT, Boolean, and_, func
 
