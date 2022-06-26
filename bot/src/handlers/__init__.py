@@ -15,11 +15,11 @@ def setup(dispatcher: Dispatcher):
     dispatcher.add_handler(CommandHandler(callback=AdminHandler.start_command_handler, command="start", filters=IsAdmin()))
     dispatcher.add_handler(CallbackQueryHandler(callback=UserHandler.start_command_callback, pattern="sub_accept"))
 
-    # User Profile
+    # Users Profile
     dispatcher.add_handler(MessageHandler(callback=UserHandler.profile_meesage_handler, filters=Filters.text("👤 Профиль") & IsUser() & IsAccess()))
     dispatcher.add_handler(ProfileConversation.handler)
 
-    # User Upload State
+    # Users Upload State
     dispatcher.add_handler(UserUploadConversation.handler)
 
     # Admin Upload State

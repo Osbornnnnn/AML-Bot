@@ -7,4 +7,3 @@ reports/
 .env
 *.zip
 *.pyc
-*.log

@@ -4,8 +4,16 @@ from ..keyboards.user_keybd import UserKeyboard
 from telegram import ReplyKeyboardRemove, Message
 
 
+# Фильтр для проверки того, находится ли пользователь в канале.
 class IsAccess(UpdateFilter):
     def filter(self, update) -> bool:
+        """
+        Если пользователя нет в канале, бот отправит пользователю сообщение с просьбой присоединиться к каналу.
+
+        :param update: объект обновления, содержащий сообщение.
+        :return: Логическое значение.
+        """
+
         msg = update.message
         query = update.callback_query
         if isinstance(msg, Message):

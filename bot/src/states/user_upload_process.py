@@ -2,8 +2,8 @@ import re
 import uuid
 import base64
 from telegram import Update
-from ..models.user import User
-from ..models.report import Report
+from ..models.users import Users
+from ..models.reports import Reports
 from ..filters.is_user import IsUser
 from ..keyboards import KeyboardMarkup
 from ..filters.is_access import IsAccess
@@ -69,7 +69,7 @@ class UserUploadConversation:
 
     def start(self, update: Update, context: CallbackContext):
         msg = update.message
-        user = User.get(msg.from_user.id)
+        user = Users.get(msg.from_user.id)
         context.user_data.clear()
 
         if not user.wallet:
@@ -91,7 +91,7 @@ class UserUploadConversation:
         btc = re.findall(r"([13][a-km-zA-HJ-NP-Z1-9]{26,36}|bc1[ac-hj-np-zAC-HJ-NP-Z02-9]{39,59})", msg.text)
         eth = re.findall(r"0x[a-fA-F0-9]{40}", msg.text)
         trx = re.findall(r"T[A-Za-z1-9]{33}", msg.text)
-        adr = Report.get_by_address(btc + eth + trx)
+        adr = Reports.get_by_address(btc + eth + trx)
 
         context.user_data.update({"btc_address": btc[0] if len(btc) and btc[0] not in list(map(lambda x: x.btc_address, adr)) else None,
                                   "eth_address": eth[0] if len(eth) and eth[0] not in list(map(lambda x: x.eth_address, adr)) else None,
@@ -215,7 +215,7 @@ class UserUploadConversation:
     def upload_welcome_screen(self, update: Update, context: CallbackContext):
         msg = update.message
 
-        context.user_data.update({"welcome_screen": "/".join(msg.bot.get_file(msg.photo[-1].file_id)["file_path"].split("/")[-2:])})
+        context.user_data.update({"welcome_screen": msg.photo[-1].file_id})
 
         msg.reply_text("<b>Вставьте скриншот профиля продавца в мессенджере (1 изображение).\n"
                        "Отправьте в сжатом формате. (Как фото)\n"
@@ -229,7 +229,7 @@ class UserUploadConversation:
         if msg.text == "Пропустить":
             context.user_data.update({"contact_screen": context.user_data["welcome_screen"]})
         else:
-            context.user_data.update({"contact_screen": "/".join(msg.bot.get_file(msg.photo[-1].file_id)["file_path"].split("/")[-2:])})
+            context.user_data.update({"contact_screen": msg.photo[-1].file_id})
 
         msg.reply_text("<b>Пришлите скриншоты переписки с продавцом (минимум 1 изображение).\n"
                        "Внимание! Если это сайт авто-оплаты, то обязательно должен быть скриншот, где виден адрес кошельков.\n"
@@ -245,8 +245,8 @@ class UserUploadConversation:
             chat_screen = context.user_data.get("chat_screen")
 
             if chat_screen is None:
-                return context.user_data.update({"chat_screen": ["/".join(msg.bot.get_file(msg.photo[-1].file_id)["file_path"].split("/")[-2:])]})
-            chat_screen.append("/".join(msg.bot.get_file(msg.photo[-1].file_id)["file_path"].split("/")[-2:]))
+                return context.user_data.update({"chat_screen": [msg.photo[-1].file_id]})
+            chat_screen.append(msg.photo[-1].file_id)
 
             return context.user_data.update({"chat_screen": chat_screen})
 
@@ -266,7 +266,7 @@ class UserUploadConversation:
         if msg.text:
             context.user_data.update({"chat_text": base64.b64encode(msg.text.encode()).decode()})
         else:
-            context.user_data.update({"chat_text": "/".join(msg.bot.get_file(msg.document.file_id)["file_path"].split("/")[-2:])})
+            context.user_data.update({"chat_text": msg.document.file_id})
 
         msg.reply_text("<b>Нажмите «✅ Отправить», чтобы отправить информацию на проверку.</b>",
                        reply_markup=self.keybd_cancel("✅ Отправить"))
@@ -277,9 +277,9 @@ class UserUploadConversation:
         msg = update.message
 
         context.user_data.update({"report_id": str(uuid.uuid1()), "user_id": update.message.from_user.id})
-        Report.update(context.user_data)
+        Reports.update(context.user_data)
 
-        User.update_statistics(pending_reports=1)
+        Users.update_statistics(pending_reports=1)
 
         msg.reply_text(f"<b>№ <code>{context.user_data['report_id']}</code>\n"
                        "Ваше сообщение было отправлено на проверку.\n"

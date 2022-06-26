@@ -2,37 +2,35 @@ import os
 import ujson
 import base64
 import shutil
-import requests
 import datetime
 from pathlib import Path
 from zipfile import ZipFile
-from ..models.user import User
-from ..config import TELEGRAM_TOKEN
-from ..models.report import Report
+from ..models.users import Users
+from ..models.reports import Reports
+from telegram import File
 from telegram.ext import CallbackContext
 
 
 class SendReports:
-    bot_url: str = f"https://api.telegram.org/file/bot{TELEGRAM_TOKEN}/"
     app_dir: Path = Path(__file__).parent.parent.parent
     tmp_dir: Path = Path(app_dir, "tmp")
-    report_dir: Path = Path(app_dir, "reports")
-    date: datetime.date = datetime.datetime.today().date() - datetime.timedelta(days=1)
+    report_dir: Path = Path(app_dir, "reports", "waiting")
 
     @staticmethod
     def start(context: CallbackContext):
-        reports = Report.get_by_date(SendReports.date)
-        admins = User.get_admins()
+        now_date: datetime.date = datetime.datetime.today().date() - datetime.timedelta(days=1)
+        path_to_reports: Path = Path(SendReports.tmp_dir, now_date.strftime("%d.%m.%Y"))
+        report_list: list = Reports.get_by_date(now_date)
+        admin_list: list = Users.get_admins()
 
-        if not admins:
+        if not admin_list:
             return
-        if not reports:
-            [context.bot.send_message(admin.user_id, "<b>Вчера отправили 0 репортов -_-</b>") for admin in admins]
+        if not report_list:
+            [context.bot.send_message(admin.user_id, "<b>Вчера отправили 0 репортов -_-</b>") for admin in admin_list]
             return
 
-        path_to_reports = Path(SendReports.tmp_dir, SendReports.date.strftime("%d.%m.%Y"))
-        for report in reports:
-            path_to_report = Path(path_to_reports, str(report.user_id), report.report_id)
+        for report in report_list:
+            path_to_report: Path = Path(path_to_reports, str(report.user_id), report.report_id)
             if not os.path.exists(path_to_report):
                 os.makedirs(path_to_report)
 
@@ -51,32 +49,33 @@ class SendReports:
                     "website_lang": report.website_lang
                 }, indent=4, ensure_ascii=False, escape_forward_slashes=False))
 
-            r = requests.get(SendReports.bot_url+report.welcome_screen).content
-            open(Path(path_to_report, f"Знакомство{os.path.splitext(report.welcome_screen)[-1]}"), "wb").write(r)
+            buf: File = context.bot.get_file(report.welcome_screen)
+            buf.download(str(Path(path_to_report, f"Знакомство{os.path.splitext(buf.file_path)[-1]}")))
 
-            r = requests.get(SendReports.bot_url+report.contact_screen).content
-            open(Path(path_to_report, f"Контакт{os.path.splitext(report.contact_screen)[-1]}"), "wb").write(r)
+            buf: File = context.bot.get_file(report.contact_screen)
+            buf.download(str(Path(path_to_report, f"Контакт{os.path.splitext(buf.file_path)[-1]}")))
 
             for i in range(len(report.chat_screen)):
-                r = requests.get(SendReports.bot_url+report.chat_screen[i]).content
-                open(Path(path_to_report, f"{i+1}{os.path.splitext(report.chat_screen[i])[-1]}"), "wb").write(r)
+                buf: File = context.bot.get_file(report.chat_screen)
+                buf.download(str(Path(path_to_report, f"{i+1}{os.path.splitext(buf.file_path)[-1]}")))
 
             try:
                 base64.b64decode(report.chat_text)
             except:
-                r = requests.get(SendReports.bot_url+report.chat_text).content
-                open(Path(path_to_report, "Переписка.txt"), "wb").write(r)
+                buf: File = context.bot.get_file(report.chat_text)
+                buf.download(str(Path(path_to_report, "Переписка.txt")))
 
-        path_to_zip = Path(SendReports.report_dir, SendReports.date.strftime("%m.%Y"))
+        path_to_zip = Path(SendReports.report_dir, now_date.strftime("%m.%Y"))
         if not os.path.exists(path_to_zip):
             os.makedirs(path_to_zip)
-        with ZipFile(Path(path_to_zip, SendReports.date.strftime("%d.%m.%Y.zip")), "w") as zipObj:
+
+        with ZipFile(Path(path_to_zip, now_date.strftime("%d.%m.%Y.zip")), "w") as zipObj:
             for root, dirs, files in os.walk(path_to_reports):
                 for file in files:
                     zipObj.write(os.path.join(root, file),
                                  os.path.relpath(os.path.join(root, file),
                                                  os.path.join(path_to_reports, '../..')))
 
-        [context.bot.send_document(admin.user_id, open(Path(path_to_zip, SendReports.date.strftime("%d.%m.%Y.zip")), "rb"),
-                                   caption="<b>На проверку</b>") for admin in admins]
+        [context.bot.send_document(admin.user_id, open(Path(path_to_zip, now_date.strftime("%d.%m.%Y.zip")), "rb"),
+                                   caption="<b>На проверку</b>") for admin in admin_list]
         shutil.rmtree(path_to_reports)

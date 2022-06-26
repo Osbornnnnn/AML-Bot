@@ -23,3 +23,5 @@ class Forum(BaseModel):
                 return forum
             except:
                 return None
+
+Forum.__table__.create(checkfirst=True)

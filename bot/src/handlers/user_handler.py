@@ -1,5 +1,5 @@
 from telegram import Update
-from ..models.user import User
+from ..models.users import Users
 from ..filters.is_user import IsUser
 from ..filters.is_access import IsAccess
 from ..keyboards.user_keybd import UserKeyboard
@@ -24,7 +24,7 @@ class UserHandler:
     def profile_meesage_handler(update: Update, _):
         msg = update.message
 
-        user = User.get(msg.from_user.id)
+        user = Users.get(msg.from_user.id)
 
         profile = [
             "<b>",
@@ -36,17 +36,18 @@ class UserHandler:
             f"Дата вступления: <code>{user.create_date.date()}</code>",
             "➖➖➖➖➖➖➖➖➖",
             "Баланс:",
-            f"На выплату: <code>{user.pending_balance}$</code>",
-            f"За всё время: <code>{user.total_balance}$</code>",
+            f"На выплату: <code>{format(user.pending_balance, '.1f')}$</code>",
+            f"За всё время: <code>{format(user.total_balance, '.1f')}$</code>",
             "➖➖➖➖➖➖➖➖➖",
             "Заявки:",
             f"Отправленные: <code>{user.pending_reports} шт.</code>",
-            f"Принятые: <code>{user.approved_reports} шт.</code>",
+            f"Приняты на выплату: <code>{user.approved_reports} шт.</code>",
             f"Всего принято: <code>{user.paid_reports} шт.</code>",
             f"Всего отклонено: <code>{user.decline_reports} шт.</code>",
             "➖➖➖➖➖➖➖➖➖",
             "</b>"
         ]
+
         msg.reply_text("\n".join(profile), reply_markup=UserKeyboard.profile_change_address())
 
     @staticmethod

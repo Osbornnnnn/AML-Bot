@@ -23,3 +23,5 @@ class Topic(BaseModel):
                 return topic
             except:
                 return None
+
+Topic.__table__.create(checkfirst=True)
