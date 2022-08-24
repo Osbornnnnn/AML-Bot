@@ -111,7 +111,7 @@ class AdminUploadConversation:
                                                                        "addresses_count": 0}
                         for key, value in log_file.items() for a, b in aml_file.items()}
 
-            report_and_aml = {key: value["aml_id"] for key, value in log_file.items()}
+            # report_and_aml = {key: value["aml_id"] for key, value in log_file.items()}
 
             user_stata = {}
             for key, value in log_file.items():

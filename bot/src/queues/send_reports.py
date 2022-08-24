@@ -56,7 +56,7 @@ class SendReports:
             buf.download(str(Path(path_to_report, f"Контакт{os.path.splitext(buf.file_path)[-1]}")))
 
             for i in range(len(report.chat_screen)):
-                buf: File = context.bot.get_file(report.chat_screen)
+                buf: File = context.bot.get_file(report.chat_screen[i])
                 buf.download(str(Path(path_to_report, f"{i+1}{os.path.splitext(buf.file_path)[-1]}")))
 
             try:

@@ -279,7 +279,7 @@ class UserUploadConversation:
         context.user_data.update({"report_id": str(uuid.uuid1()), "user_id": update.message.from_user.id})
         Reports.update(context.user_data)
 
-        Users.update_statistics(pending_reports=1)
+        Users.update_statistics(user_id=msg.from_user.id, pending_reports=1)
 
         msg.reply_text(f"<b>№ <code>{context.user_data['report_id']}</code>\n"
                        "Ваше сообщение было отправлено на проверку.\n"
