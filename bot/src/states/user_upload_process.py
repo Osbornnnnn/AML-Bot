@@ -6,6 +6,7 @@ from ..models.users import Users
 from ..models.reports import Reports
 from ..filters.is_user import IsUser
 from ..keyboards import KeyboardMarkup
+from datetime import datetime, timedelta
 from ..filters.is_access import IsAccess
 from ..keyboards.user_keybd import UserKeyboard
 from telegram.ext import ConversationHandler, CallbackContext, MessageHandler, Filters, CallbackQueryHandler
@@ -91,6 +92,11 @@ class UserUploadConversation:
         btc = re.findall(r"([13][a-km-zA-HJ-NP-Z1-9]{26,36}|bc1[ac-hj-np-zAC-HJ-NP-Z02-9]{39,59})", msg.text)
         eth = re.findall(r"0x[a-fA-F0-9]{40}", msg.text)
         trx = re.findall(r"T[A-Za-z1-9]{33}", msg.text)
+
+        if len(eth) and len(btc):
+            if btc[0] in eth[0]:
+                btc.clear()
+
         adr = Reports.get_by_address(btc + eth + trx)
 
         context.user_data.update({"btc_address": btc[0] if len(btc) and btc[0] not in list(map(lambda x: x.btc_address, adr)) else None,
@@ -276,7 +282,8 @@ class UserUploadConversation:
     def send_report(self, update: Update, context: CallbackContext):
         msg = update.message
 
-        context.user_data.update({"report_id": str(uuid.uuid1()), "user_id": update.message.from_user.id})
+        context.user_data.update({"report_id": str(uuid.uuid1()), "user_id": update.message.from_user.id,
+                                  "create_date": datetime.utcnow() + timedelta(hours=3)})
         Reports.update(context.user_data)
 
         Users.update_statistics(user_id=msg.from_user.id, pending_reports=1)

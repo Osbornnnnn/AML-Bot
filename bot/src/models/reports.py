@@ -30,7 +30,7 @@ class Reports(BaseModel):
     check_date = Column(DATETIME())
     is_paid = Column(Boolean(), default=False)
     paid_date = Column(DATETIME())
-    create_date = Column(DATETIME(), default=datetime.utcnow() + timedelta(hours=3))
+    create_date = Column(DATETIME())
 
     @staticmethod
     def get_by_address(addresses: list) -> list[Reports]:
